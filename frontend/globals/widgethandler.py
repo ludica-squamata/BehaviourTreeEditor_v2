@@ -83,15 +83,6 @@ class WidgetHandler:
                 elif e.key == K_RETURN:
                     EventHandler.trigger('CreateDialog', cls.name, {'nodes': cls.numerable})
 
-                # elif e.key == K_F1:
-                #     System.load_data()
-                #     diff = len(cls.numerable) - System.lenght
-                #     for i in range(diff):
-                #         cls.numerable[-1].kill()
-                #
-                # elif e.key == K_F2:
-                #     System.new_locutor()
-
                 elif e.key == K_F3:
                     if any([o.order == 'b' for o in widgets]):
                         System.toggle_typemode('MainTB')
@@ -113,9 +104,6 @@ class WidgetHandler:
                     color_namer = widgets.pop(0)
                     for other in widgets:
                         other.colorize(color_namer)
-
-                # elif e.key == K_F5:
-                #     System.toggle_input_mode()
 
                 elif len(cls.selected):
                     for widget in cls.selected.widgets():
