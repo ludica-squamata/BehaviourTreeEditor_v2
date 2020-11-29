@@ -92,12 +92,13 @@ class WidgetHandler:
 
                 elif e.key == K_s:
                     x, y = mouse.get_pos()
-                    color = None
+                    color, text = None, None
                     if any([o.order == 'a' for o in widgets]):
                         color = [i for i in widgets if i.order == 'a'][0].color
+                        text = [i for i in widgets if i.order == 'a'][0].text
 
-                    if System.area_nodos.collidepoint(x, y):
-                        EventHandler.trigger('AddNode', cls.name, {'pos': [x, y], 'color': color})
+                    if System.area_nodos.collidepoint(x, y) and text is not None:
+                        EventHandler.trigger('AddNode', cls.name, {'text': text, 'pos': [x, y], 'color': color})
 
                 elif e.key == K_d and any([o.order == 'a' for o in widgets]):
                     widgets.sort(key=lambda o: o.order)

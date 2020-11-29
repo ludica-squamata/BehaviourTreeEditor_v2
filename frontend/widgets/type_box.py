@@ -64,7 +64,7 @@ class TypeBox(BaseWidget):
         s = [o for o in WidgetHandler.selected.sprites() if o.numerable]
         if len(s) == 1 and any([len(line) for line in self.lines]):
             idx = s[0].idx
-            text = '\n'.join([''.join(line) for line in self.lines])
+            text = '\n'.join([''.join(str(line)) for line in self.lines])
             EventHandler.trigger('WriteNode', self, {'idx': idx, 'text': text})
             self.clear()
 

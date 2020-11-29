@@ -8,60 +8,54 @@ from .basewidget import BaseWidget
 class Node(BaseWidget):
     idx = 0
     order = 'b'
-    type_overriden = False
-    _tipo = 'node'
     tamanio = 16
 
-    locutor_name = ''
     named = False
     color_base = COLOR_UNSELECTED
     color_font = COLOR_SELECTED
     color_box = COLOR_SELECTED
 
-    interlocutor = None
     numerable = True
     selectable = True
     editable = True
 
     def __init__(self, data):
         super().__init__()
-        self.connections = []
+        self.children = []
         self.fuente = font.SysFont('Verdana', 10)
         self.layer = 1
+        self.tipo = data['text'] if data['text'] != '' else 'leaf'
         WidgetHandler.add_widget(self)
         Renderer.add_widget(self)
         self.image = self.create()
         if data['color'] is not None:
             self.colorize(data['color'])
+            self.text = data['text']
 
         self.rect = self.image.get_rect(center=data['pos'])
         EventHandler.register(self.toggle_selection, 'select', 'deselect')
 
     def connect(self, other):
-        if other not in self.connections:
+        if self.tipo == 'leaf' and other.tipo == 'leaf':
+            raise TypeError('Two leaves cannot conect to each other')
+
+        if other not in self.children:
             toggle_connection(self, other)
-            self.connections.append(other)
-            self.interlocutor = other
+            self.children.append(other)
 
-        if len(self.connections) > 1:
-            for child in self.connections:
-                child.type_overriden = True
-                child.tipo = 'branch'
-
-        for child in self.connections:
-            child.interlocutor = self
+        for child in self.children:
+            child.parent = self
 
     def disconnect(self, other):
-        if other in self.connections:
+        if other in self.children:
             toggle_connection(self, other, value=False)
-            self.connections.remove(other)
+            self.children.remove(other)
 
     def get_idx(self):
         return [w for w in WidgetHandler.widgets.sprites() if w.numerable].index(self)
 
     def colorize(self, color_namer):
         a = color_namer.color if hasattr(color_namer, 'color') else color_namer
-        self.locutor_name = color_namer.name if hasattr(color_namer, 'name') else '%02x%02x%02x' % (a.r, a.g, a.b)
         self.named = True if hasattr(color_namer, 'name') else False
         self.color_base = a
         if (0.2126 * a.r + 0.7152 * a.g + 0.0722 * a.b) < 50:
@@ -71,10 +65,6 @@ class Node(BaseWidget):
         self.color_font = color_b
         self.color_box = color_b
         self.image.fill(self.color_base)
-
-    def name_locutor(self, new_name):
-        self.locutor_name = new_name
-        self.named = True
 
     def create(self):
         return Surface((self.size, self.size))
@@ -112,25 +102,12 @@ class Node(BaseWidget):
         super().kill()
 
     @property
-    def tipo(self):
-        tipo = self._tipo
-        if not self.type_overriden:
-            tipo = 'node'
-        if not len(self.connections):
-            tipo = 'leaf'
-        return tipo
-
-    @tipo.setter
-    def tipo(self, value):
-        self._tipo = value
-
-    @property
     def lead(self):
-        lenght = len(self.connections)
+        lenght = len(self.children)
         if lenght > 1:
-            return [int(i) for i in self.connections]
+            return [int(i) for i in self.children]
         elif lenght == 1:
-            return int(self.connections[0])
+            return int(self.children[0])
 
     def select(self):
         super().select()

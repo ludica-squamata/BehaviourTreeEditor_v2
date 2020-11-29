@@ -45,6 +45,9 @@ class Preview(BaseWidget):
         elif not len(s):
             t = 'No hay nodos seleccionados. Haga click en uno para ver su contenido o bien toque S para crear un nodo.'
 
+        else:
+            t = s[0].text
+
         return t
 
     def update(self):
