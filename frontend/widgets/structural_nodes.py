@@ -1,9 +1,8 @@
-from frontend.globals import COLOR_BOX, COLOR_TEXT, COLOR_SELECTED, WIDTH, HEIGHT
+from frontend.globals import COLOR_BOX, COLOR_TEXT, COLOR_SELECTED, WIDTH, HEIGHT, node_colors
 from pygame import font, Surface, Rect, Color
 from backend import EventHandler, render_textrect, WidgetGroup
 from frontend.globals import WidgetHandler, Renderer
 from .basewidget import BaseWidget
-from random import randint
 
 
 class StructureNodes(BaseWidget):
@@ -29,26 +28,19 @@ class StructureNodes(BaseWidget):
 
         standard = ['Sequence', 'Selector', 'Repeater', 'UntilFail', 'Inverter', 'Succeder']
         for i, name in enumerate(standard):
-            y = self.rect.y + 21 + + i*21
-            color = self.generate_color()
+            y = self.rect.y + 21 + + i * 21
+            color = node_colors[name]
             n = StandardNode(self, name, y, color)
             Renderer.add_widget(n)
             WidgetHandler.add_widget(n)
             self.properties.add(n)
 
-        n = StandardNode(self, 'Leaf', self.rect.y + 25 + + (len(standard))*21, COLOR_BOX)
+        n = StandardNode(self, 'Leaf', self.rect.y + 25 + + (len(standard)) * 21, COLOR_BOX)
         Renderer.add_widget(n)
         WidgetHandler.add_widget(n)
         self.properties.add(n)
 
         Renderer.add_widget(self)
-
-    @staticmethod
-    def generate_color():
-        h = randint(0, 360)
-        a = Color('white')
-        a.hsla = h, 100, 50, 100
-        return a
 
     def deselect_all(self):
         for n in self.properties.widgets():
